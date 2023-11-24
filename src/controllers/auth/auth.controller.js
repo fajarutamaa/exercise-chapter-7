@@ -1,4 +1,4 @@
-const { ComparePassword, HashPassword } = require('../../helpers/pass.helper')
+const { ComparePassword, HashPassword, HashToken } = require('../../helpers/pass.helper')
 const { ResponseTemplate } = require('../../helpers/resp.helper')
 
 const { PrismaClient } = require('@prisma/client')
@@ -83,8 +83,11 @@ async function Login(req, res, next) {
 
         let token = jwt.sign(user, process.env.JWT_SECRET_KEY)
 
-        let response = ResponseTemplate(token, 'success', null, 200)
-        res.status(200).json(response)
+        const resultToken = HashToken(token)
+        res.status(200).json({
+            data:resultToken,
+            status:200
+        })
         return
 
     } catch (error) {
